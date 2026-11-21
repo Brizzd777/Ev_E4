@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Funciones que devuelven resultados</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    min-height: 100vh;
+    background: #f4f6f8;
+    color: #1d2a33;
+  }
+
+  /* Menú vertical */
+  nav {
+    width: 230px;
+    background: #17323f;
+    padding: 24px 0;
+    flex-shrink: 0;
+  }
+  nav h1 {
+    font-size: 16px;
+    color: #cfe3ea;
+    margin: 0 20px 20px;
+    font-weight: normal;
+  }
+  nav a {
+    display: block;
+    padding: 12px 20px;
+    color: #ffffff;
+    text-decoration: none;
+    border-left: 4px solid transparent;
+  }
+  nav a:hover { background: #21475a; }
+  nav a.activo {
+    background: #21475a;
+    border-left-color: #f2b84b;
+  }
+  nav a:focus-visible { outline: 2px solid #f2b84b; outline-offset: -2px; }
+
+  /* Contenido */
+  main { flex: 1; padding: 32px; max-width: 640px; }
+  section { display: none; }
+  section.activa { display: block; }
+  h2 { margin-top: 0; }
+  label { display: block; margin: 14px 0 4px; }
+  input {
+    padding: 8px 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 260px;
+    border: 1px solid #9fb0ba;
+    border-radius: 4px;
+  }
+  button {
+    margin-top: 18px;
+    padding: 10px 18px;
+    font-size: 16px;
+    background: #17323f;
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover { background: #21475a; }
+  .resultado {
+    margin-top: 22px;
+    padding: 14px 16px;
+    background: #fff;
+    border-left: 4px solid #f2b84b;
+    min-height: 24px;
+  }
+
+  @media (max-width: 600px) {
+    body { flex-direction: column; }
+    nav { width: 100%; padding: 12px 0; }
+    nav h1 { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <h1>Funciones que devuelven resultados</h1>
+  <a href="#circulo" class="activo" data-seccion="circulo">Área del círculo</a>
+  <a href="#imc" data-seccion="imc">Índice de masa corporal</a>
+</nav>
+
+<main>
+
+  <!-- Código 1: Área del círculo -->
+  <section id="circulo" class="activa">
+    <h2>Área del círculo</h2>
+    <label for="radio">Dame el valor del radio del círculo:</label>
+    <input type="number" id="radio" min="0" step="any" placeholder="Escribe un número">
+    <br>
+    <button onclick="mostrarArea()">Calcular</button>
+    <div class="resultado" id="resArea" aria-live="polite"></div>
+  </section>
+
+  <!-- Código 2: IMC -->
+  <section id="imc">
+    <h2>Índice de masa corporal</h2>
+    <label for="peso">¿Cuánto pesas? (en kg)</label>
+    <input type="number" id="peso" min="0" step="any" placeholder="Ej. 70">
+    <label for="altura">¿Cuánto mides? (en metros)</label>
+    <input type="number" id="altura" min="0" step="any" placeholder="Ej. 1.70">
+    <br>
+    <button onclick="mostrarIMC()">Calcular</button>
+    <div class="resultado" id="resIMC" aria-live="polite"></div>
+  </section>
+
+</main>
+
+<script>
+  /* ---------- Función 1: devuelve el área del círculo ---------- */
+  function calcularAreaCirculo(radio) {
+    var area = Math.PI * radio * radio;   // calcula el área del círculo
+    var area2 = area.toFixed(2);          // lo ajusta a 2 decimales
+    return area2;
+  }
+
+  function mostrarArea() {
+    var radio = parseFloat(document.getElementById("radio").value);
+    var salida = document.getElementById("resArea");
+    if (isNaN(radio) || radio < 0) {
+      salida.textContent = "Escribe un radio válido.";
+      return;
+    }
+    var areaCirculo = calcularAreaCirculo(radio);
+    salida.textContent = "El área del círculo es: " + areaCirculo;
+  }
+
+  /* ---------- Función 2: devuelve el IMC ---------- */
+  // IMC = peso / altura al cuadrado
+  function calcularIMC(peso, altura) {
+    return peso / Math.pow(altura, 2);
+  }
+
+  function mostrarIMC() {
+    var peso = parseFloat(document.getElementById("peso").value);
+    var altura = parseFloat(document.getElementById("altura").value);
+    var salida = document.getElementById("resIMC");
+
+    if (isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+      salida.textContent = "No aplica con ese peso o estatura";
+      return;
+    }
+
+    var IMC = calcularIMC(peso, altura);
+    var texto = IMC.toFixed(1);
+
+    if (IMC < 18.5) {
+      salida.textContent = "El IMC es " + texto + ". Tienes bajo peso";
+    } else if (IMC < 25) {
+      salida.textContent = "El IMC es " + texto + ". Tienes un peso normal";
+    } else if (IMC < 30) {
+      salida.textContent = "El IMC es " + texto + ". Tienes sobrepeso";
+    } else if (IMC < 35) {
+      salida.textContent = "El IMC es " + texto + ". Tienes obesidad moderada";
+    } else if (IMC < 40) {
+      salida.textContent = "El IMC es " + texto + ". Tienes obesidad severa";
+    } else {
+      salida.textContent = "El IMC es " + texto + ". Tienes obesidad muy severa";
+    }
+  }
+
+  /* ---------- Menú vertical: cambia de sección ---------- */
+  var enlaces = document.querySelectorAll("nav a");
+  enlaces.forEach(function (enlace) {
+    enlace.addEventListener("click", function (e) {
+      e.preventDefault();
+      enlaces.forEach(function (a) { a.classList.remove("activo"); });
+      document.querySelectorAll("section").forEach(function (s) { s.classList.remove("activa"); });
+      enlace.classList.add("activo");
+      document.getElementById(enlace.dataset.seccion).classList.add("activa");
+    });
+  });
+</script>
+
+</body>
+</html>
